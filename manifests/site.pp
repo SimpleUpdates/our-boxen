@@ -85,7 +85,7 @@ node default {
   }
 
   #
-  # Remove services we do not want
+  # Remove services SimpleUpdates does not need
   #
   service {"dev.nginx":
 	ensure => "stopped"
@@ -94,7 +94,43 @@ node default {
   service {"dev.dnsmasq":
 	ensure => "stopped"
   }
+  
+  #
+  # Install MySQL and supporting components and packages
+  # pstree and watch provide feedback on MySQL installation
+  # since it takes a long time
+  #
+  package { "pstree":
+    ensure => present,
+  }
+ 
+  package { "watch":
+    ensure => present,
+  }
+ 
+ package { "mtr":
+    ensure => present,
+  }
 
+  exec { "tap-homebrew-dupes":
+    command => "brew tap homebrew/dupes",
+    creates => "${homebrew::config::tapsdir}/homebrew-dupes",
+  }
+ 
+  exec { "josegonzalez/homebrew-php":
+    command => "brew tap josegonzalez/homebrew-php",
+    creates => "${homebrew::config::tapsdir}/josegonzalez-php",
+    require => Exec["tap-homebrew-dupes"],
+  }
+
+  package { "php55":
+    ensure => present,
+    require => [
+        Exec["josegonzalez/homebrew-php"],
+        Package["pstree"],
+        Package["watch"],
+        ],
+  }
   file { "${boxen::config::srcdir}/our-boxen":
     ensure => link,
     target => $boxen::config::repodir
