@@ -64,6 +64,9 @@ node default {
     fail('Please enable full disk encryption and try again')
   }
 
+  # openssl required since it was included in either dnsmasq or nginx
+  include openssl
+
   # node versions
   include nodejs::v0_6
   include nodejs::v0_8
