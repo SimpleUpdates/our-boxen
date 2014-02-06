@@ -54,10 +54,10 @@ Homebrew::Formula <| |> -> Package <| |>
 
 node default {
   # core modules, needed for most things
-  #include dnsmasq
+  include dnsmasq   ### Not needed by SU ###
   include git
   include hub
-  include nginx
+  include nginx   ### Not needed by SU ###
 
   # fail if FDE is not enabled
   if $::root_encrypted == 'no' {
@@ -84,7 +84,54 @@ node default {
     ]:
   }
 
- 	file { "${boxen::config::srcdir}/our-boxen":
+  #
+  # Remove services SimpleUpdates does not need
+  #
+  service {"dev.nginx":
+	ensure => "stopped"
+  }
+
+  service {"dev.dnsmasq":
+	ensure => "stopped"
+  }
+  
+  #
+  # Install MySQL and supporting components and packages
+  # pstree and watch provide feedback on MySQL installation
+  # since it takes a long time
+  #
+  package { "pstree":
+    ensure => present,
+  }
+ 
+  package { "watch":
+    ensure => present,
+  }
+ 
+  package { "mtr":
+    ensure => present,
+  }
+
+  exec { "tap-homebrew-dupes":
+    command => "brew tap homebrew/dupes",
+    creates => "${homebrew::config::tapsdir}/homebrew-dupes",
+  }
+ 
+  exec { "josegonzalez/homebrew-php":
+    command => "brew tap josegonzalez/homebrew-php",
+    creates => "${homebrew::config::tapsdir}/josegonzalez-php",
+    require => Exec["tap-homebrew-dupes"],
+  }
+
+  package { "php55":
+    ensure => present,
+    require => [
+        Exec["josegonzalez/homebrew-php"],
+        Package["pstree"],
+        Package["watch"],
+        ],
+  }
+  file { "${boxen::config::srcdir}/our-boxen":
     ensure => link,
     target => $boxen::config::repodir
   }
