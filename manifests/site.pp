@@ -54,10 +54,10 @@ Homebrew::Formula <| |> -> Package <| |>
 
 node default {
   # core modules, needed for most things
-  include dnsmasq   ### Not needed by SU ###
+  # include dnsmasq   ### Not needed by SU ###
   include git
   include hub
-  include nginx   ### Not needed by SU ###
+  # include nginx   ### Not needed by SU ###
 
   # fail if FDE is not enabled
   if $::root_encrypted == 'no' {
@@ -112,15 +112,15 @@ node default {
     ensure => present,
   }
 
-  exec { "tap-homebrew-dupes":
-    command => "brew tap homebrew/dupes",
-    creates => "${homebrew::config::tapsdir}/homebrew-dupes",
-  }
+#  exec { "tap-homebrew-dupes":
+#    command => "brew tap homebrew/dupes",
+#    creates => "${homebrew::config::tapsdir}/homebrew-dupes",
+#  }
  
   exec { "josegonzalez/homebrew-php":
     command => "brew tap josegonzalez/homebrew-php",
-    creates => "${homebrew::config::tapsdir}/josegonzalez-php",
-    require => Exec["tap-homebrew-dupes"],
+    creates => "${homebrew::config::tapsdir}/josegonzalez-php"
+#    require => Exec["tap-homebrew-dupes"],
   }
 
   package { "php55":
@@ -131,6 +131,7 @@ node default {
         Package["watch"],
         ],
   }
+
   file { "${boxen::config::srcdir}/our-boxen":
     ensure => link,
     target => $boxen::config::repodir
