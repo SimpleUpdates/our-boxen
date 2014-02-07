@@ -15,7 +15,8 @@ Exec {
     '/usr/bin',
     '/bin',
     '/usr/sbin',
-    '/sbin'
+    '/sbin',
+    "${boxen::config::home}/repo/vendor/cache"
   ],
 
   environment => [
