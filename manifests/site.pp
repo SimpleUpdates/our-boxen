@@ -21,7 +21,7 @@ Exec {
   environment => [
     "HOMEBREW_CACHE=${homebrew::config::cachedir}",
     "HOME=/Users/${::boxen_user}",
-    "PATH+=${boxen::config::home}/repo/vendor/cache"
+    "PATH=${PATH}:${boxen::config::home}/repo/vendor/cache"
   ]
 }
 
