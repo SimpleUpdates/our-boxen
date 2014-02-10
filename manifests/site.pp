@@ -7,7 +7,10 @@ Exec {
   logoutput   => on_failure,
   user        => $boxen_user,
 
+  notify {"${PATH}":}
+
   path => [
+    "${PATH},
     "${boxen::config::home}/rbenv/shims",
     "${boxen::config::home}/rbenv/bin",
     "${boxen::config::home}/rbenv/plugins/ruby-build/bin",
@@ -20,8 +23,7 @@ Exec {
 
   environment => [
     "HOMEBREW_CACHE=${homebrew::config::cachedir}",
-    "HOME=/Users/${::boxen_user}",
-    "PATH=${PATH}:${boxen::config::home}/repo/vendor/cache"
+    "HOME=/Users/${::boxen_user}"
   ]
 }
 
@@ -115,12 +117,14 @@ node default {
 
   exec { "tap-homebrew-dupes":
     command => "brew tap homebrew/dupes",
-    creates => "${homebrew::config::tapsdir}/homebrew-dupes"
+    creates => "${homebrew::config::tapsdir}/homebrew-dupes",
+    path => "${PATH}:${boxen::config::home}/repo/vendor/cache"
   }
  
   exec { "josegonzalez/homebrew-php":
     command => "brew tap josegonzalez/homebrew-php",
     creates => "${homebrew::config::tapsdir}/josegonzalez-php",
+    path => "${PATH}:${boxen::config::home}/repo/vendor/cache",
     require => Exec["tap-homebrew-dupes"]
   }
 
