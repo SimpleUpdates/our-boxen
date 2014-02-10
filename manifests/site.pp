@@ -81,7 +81,7 @@ node default {
     [
       'ack',
       'findutils',
-      'gnu-tar'
+      'gnu-tar',
     ]:
   }
 
@@ -102,26 +102,26 @@ node default {
   # since it takes a long time
   #
   package { "pstree":
-    ensure => present,
+    ensure => present
   }
  
   package { "watch":
-    ensure => present,
+    ensure => present
   }
  
   package { "mtr":
-    ensure => present,
+    ensure => present
   }
 
   exec { "tap-homebrew-dupes":
     command => "brew tap homebrew/dupes",
-    creates => "${homebrew::config::tapsdir}/homebrew-dupes",
+    creates => "${homebrew::config::tapsdir}/homebrew-dupes"
   }
  
   exec { "josegonzalez/homebrew-php":
     command => "brew tap josegonzalez/homebrew-php",
-    creates => "${homebrew::config::tapsdir}/josegonzalez-php"
-    require => Exec["tap-homebrew-dupes"],
+    creates => "${homebrew::config::tapsdir}/josegonzalez-php",
+    require => Exec["tap-homebrew-dupes"]
   }
 
   package { "php55":
@@ -129,8 +129,8 @@ node default {
     require => [
         Exec["josegonzalez/homebrew-php"],
         Package["pstree"],
-        Package["watch"],
-        ],
+        Package["watch"]
+        ]
   }
 
   file { "${boxen::config::srcdir}/our-boxen":
