@@ -15,13 +15,13 @@ Exec {
     '/usr/bin',
     '/bin',
     '/usr/sbin',
-    '/sbin',
-    "${boxen::config::home}/repo/vendor/cache"
+    '/sbin'
   ],
 
   environment => [
     "HOMEBREW_CACHE=${homebrew::config::cachedir}",
-    "HOME=/Users/${::boxen_user}"
+    "HOME=/Users/${::boxen_user}",
+    "PATH+=${boxen::config::home}/repo/vendor/cache"
   ]
 }
 
@@ -113,15 +113,15 @@ node default {
     ensure => present,
   }
 
-#  exec { "tap-homebrew-dupes":
-#    command => "brew tap homebrew/dupes",
-#    creates => "${homebrew::config::tapsdir}/homebrew-dupes",
-#  }
+  exec { "tap-homebrew-dupes":
+    command => "brew tap homebrew/dupes",
+    creates => "${homebrew::config::tapsdir}/homebrew-dupes",
+  }
  
   exec { "josegonzalez/homebrew-php":
     command => "brew tap josegonzalez/homebrew-php",
     creates => "${homebrew::config::tapsdir}/josegonzalez-php"
-#    require => Exec["tap-homebrew-dupes"],
+    require => Exec["tap-homebrew-dupes"],
   }
 
   package { "php55":
